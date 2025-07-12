@@ -42,4 +42,6 @@ app.router.add_get('/', index_handler)
 app.router.add_get('/script.js', js_handler)
 app.router.add_get('/ws', websocket_handler)
 
-web.run_app(app, host='0.0.0.0', port=8080)
+import os
+port = int(os.environ.get("PORT", 8080))
+web.run_app(app, host='0.0.0.0', port=port)
