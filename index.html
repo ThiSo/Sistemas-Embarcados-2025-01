@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Osciloscópio ESP32</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; background: #f0f0f0; }
+    canvas { background: white; border: 1px solid #ccc; margin-top: 20px; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Osciloscópio ESP32</h1>
+  <canvas id="grafico" width="800" height="400"></canvas>
+
+  <!-- Botão para pausar -->
+  <button id="toggleBtn">Pausar</button>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
