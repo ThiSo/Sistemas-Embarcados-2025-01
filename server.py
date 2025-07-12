@@ -1,5 +1,4 @@
 import asyncio
-import websockets
 import aiohttp
 from aiohttp import web
 
