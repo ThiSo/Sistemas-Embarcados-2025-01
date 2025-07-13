@@ -36,6 +36,17 @@ const config = {
     plugins: {
       legend: {
         display: true
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+        zoom: {
+          wheel: { enabled: true },
+          pinch: { enabled: true },
+          mode: 'x',
+        }
       }
     }
   }
@@ -50,6 +61,43 @@ document.getElementById("toggleBtn").addEventListener("click", () => {
   toggleBtn.textContent = pausado ? "Retomar" : "Pausar";
 });
 
+function calcularMetricas() {
+  const valores = data.datasets[0].data;
+  if (valores.length === 0) return;
+
+  const soma = valores.reduce((a, b) => a + b, 0);
+  const media = (soma / valores.length).toFixed(2);
+  const max = Math.max(...valores);
+  const min = Math.min(...valores);
+
+  // Estimar frequência pela contagem de cruzamentos pelo zero
+  let cruzamentos = 0;
+  for (let i = 1; i < valores.length; i++) {
+    if ((valores[i - 1] < 0 && valores[i] >= 0) || (valores[i - 1] > 0 && valores[i] <= 0)) {
+      cruzamentos++;
+    }
+  }
+  const freq = ((cruzamentos / 2) * 10).toFixed(2);  // 10 Hz se 100ms entre pontos
+
+  document.getElementById("media").textContent = media;
+  document.getElementById("max").textContent = max;
+  document.getElementById("min").textContent = min;
+  document.getElementById("freq").textContent = freq;
+}
+
+function checarTrigger(valor) {
+  const trigger = parseFloat(document.getElementById("triggerValor").value);
+  const status = document.getElementById("triggerStatus");
+
+  if (Math.abs(valor) >= Math.abs(trigger)) {
+    status.textContent = `Trigger disparado em ${valor}`;
+    pausado = true;
+    toggleBtn.textContent = "Retomar";
+  } else {
+    status.textContent = "";
+  }
+}
+
 function adicionarDado(valor) {
   labels.push('');
   data.datasets[0].data.push(valor);
@@ -62,7 +110,6 @@ function adicionarDado(valor) {
   grafico.update();
 }
 
-// 👇 Coloque o IP real do seu PC aqui
 const socket = new WebSocket("wss://embarcados-gocs.onrender.com/ws");
 
 socket.onopen = () => {
@@ -84,6 +131,8 @@ socket.onmessage = (event) => {
       bufferPausado = [];
     }
     adicionarDado(valor);
+    calcularMetricas();
+    checarTrigger(valor);
   }
 };
 

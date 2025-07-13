@@ -4,15 +4,29 @@
   <meta charset="UTF-8" />
   <title>Osciloscópio ESP32</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.0"></script>
   <style>
     body { font-family: sans-serif; text-align: center; background: #f0f0f0; }
     canvas { background: white; border: 1px solid #ccc; margin-top: 20px; }
     button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
+
+    #triggerStatus {
+      color: red;
+      display: inline-block; 
+    }
   </style>
 </head>
 <body>
   <h1>Osciloscópio ESP32</h1>
-  <canvas id="grafico" width="800" height="400"></canvas>
+
+  <label>Trigger: <input type="number" id="triggerValor"> </label>
+  <p><span id="triggerStatus"></span></p>
+
+  <canvas id="grafico" width="800" height="300"></canvas>
+
+  <div id="metrics">
+  <p>Tensão Média: <span id="media">0</span> | Tensão Máxima: <span id="max">0</span> | Tensão Mínima: <span id="min">0</span> | Frequência estimada: <span id="freq">0</span> Hz</p>
+  </div>
 
   <!-- Botão para pausar -->
   <button id="toggleBtn">Pausar</button>
