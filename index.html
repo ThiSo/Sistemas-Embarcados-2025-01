@@ -2,30 +2,118 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Osciloscópio ESP32</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
   <style>
-    body { font-family: sans-serif; text-align: center; background: #f0f0f0; }
-    canvas { background: white; border: 1px solid #ccc; margin-top: 20px; }
-    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    #triggerStatus {
-      color: red;
-      display: inline-block; 
+    html, body {
+      height: 100%;
+      background: #f0f0f0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+    }
+
+    #deltaInfo {
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    #grafico {
+      flex-grow: 1;
+      width: 100%;
+      max-width: 100%;
+      max-height: 60vh;
+    }
+
+    canvas {
+      background: white;
+      border: 1px solid #ccc;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    #triggerLabel.disabled span,
+    #triggerLabel.disabled input {
+      opacity: 0.5;
+    }
+
+    #triggerLabel.disabled input {
+      background-color: #e0e0e0;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    label, #metrics, #triggerStatus {
+      font-size: 1rem;
+      margin: 5px 0;
+    }
+
+    input[type="number"] {
+      max-width: 80px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 300px;
+      margin-top: 10px;
+    }
+
+    #metrics {
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    @media (max-height: 500px) {
+      #grafico {
+        max-height: 40vh;
+      }
     }
   </style>
 </head>
 <body>
   <h1>Osciloscópio ESP32</h1>
 
-  <label>Trigger: <input type="number" id="triggerValor"> </label>
+  <!-- Variações -->
+  <div id="deltaInfo" style="margin-top: 10px; text-align: center;">
+    <p>Variação do Tempo: <span id="deltaX">0</span> ms | Variação da Tensão: <span id="deltaY">0</span> mV</p>
+    <button id="resetSelecao">Limpar Seleção</button>
+  </div>
+
+  <!-- Gráfico -->
+  <canvas id="grafico"></canvas>
+
+  <!-- Trigger -->
+  <div id="triggerContainer" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+    <input type="checkbox" id="triggerAtivo" checked>
+    <label id="triggerLabel" style="display: flex; align-items: center; gap: 5px;">
+      <span id="triggerTexto">Trigger:</span>
+      <input type="number" id="triggerValor">
+    </label>
+  </div>
   <p><span id="triggerStatus"></span></p>
 
-  <canvas id="grafico" width="800" height="300"></canvas>
-
+  <!-- Valores Relevantes -->
   <div id="metrics">
-  <p>Tensão Média: <span id="media">0</span> | Tensão Máxima: <span id="max">0</span> | Tensão Mínima: <span id="min">0</span> | Frequência estimada: <span id="freq">0</span> Hz</p>
+  <p>Tensão Média: <span id="media">0</span> mV | Tensão Máxima: <span id="max">0</span> mV | Tensão Mínima: <span id="min">0</span> mV</p>
   </div>
 
   <!-- Botão para pausar -->
