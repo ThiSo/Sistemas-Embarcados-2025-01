@@ -63,7 +63,7 @@ function adicionarDado(valor) {
 }
 
 // 👇 Coloque o IP real do seu PC aqui
-const socket = new WebSocket("ws://10.0.6.192:8080/ws");
+const socket = new WebSocket("wss://embarcados-gocs.onrender.com/ws");
 
 socket.onopen = () => {
   console.log("Conectado ao WebSocket");
